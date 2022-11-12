@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description"
+            content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+        <title>Final Project</title>
+        <link rel="stylesheet" href="../Resources/pure-min.css">
+        <link rel="stylesheet" href="../Resources/styles.css">
+        <link rel="stylesheet" href="../Resources/imagegrid.css">
+
+        <link href="../Resources/offcanvas.css" rel="stylesheet">
+        <link href="../Resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+    </head>
+
+<body>
+
+    <div id="layout">
+        <!-- Menu toggle -->
+        <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+        </a>
+
+        <div id="menu">
+            <div class="pure-menu pure-menu-open">
+                <a class="pure-menu-heading" href="../report.html">Final Report</a>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="../report.html">Motivation</a></li>
+                    <li class="menu-item-divided pure-menu-selected"><a class="pure-menu-link" href="features.html">Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="distribution.html">Work Distribution</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature1.html">Modeling Meshes</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature2.html">Images as Textures</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature3.html">Normal Mapping</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature4.html">Progressive Photon Mapping</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature5.html">Participating Media</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="additional_features.html">Additional Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="finalRendering.html">Final Rendering</a></li></ul>
+            </div>
+        </div>
+
+        <div id="main">
+
+            <div class="content">
+                <!--<i>Please click image thumbnails for full size version</i>-->
+                <div class="header">
+                    <h1 class="content-subhead">Graded Features</h1>
+
+               </div>
+
+
+                <h1 class="content-subhead">Small (5 Points)</h1>
+
+                <h2 class="content-subhead">Modeling Mesh</h2>
+                <p>We will model the mesh of the lightning. We will use Blender for this task.
+                    <br><b>Validation:</b> We provide images of the modeling process to prove that we made the model.
+                </p>
+
+                <h2 class="content-subhead">Normal Mapping</h2>
+                <p>
+                    <br><b>Validation:</b> First, we can use the normal integrator to visualize the normal map in the scene.
+                    Additionally, we will provide a comparison of an identical scene with non-normal-mapped and a normal-mapped objects.
+                    As last, we will make a comparison to the Mitsuba renderer.
+                </p>
+
+                <h2 class="content-subhead">Images as Textures</h2>
+                <p>We will implement functionality in nori to make it possible to use images as textures. 
+                    <br><b>Validation:</b> We render a scene containing image textures and compare it to the rendering produced by Mitsuba.
+                </p>
+
+                <h2 class="content-subhead">Simple Extra Emitter: Directional Light</h2>
+                <p>We implement an additional Emitter: the directional light.
+                    <br><b>Validation:</b> We render a scene containing a directional light and compare it to the rendering produced by the Mitsuba renderer.
+                </p>
+
+                <h2 class="content-subhead">Simple Extra Emitter: Spotlight</h2>
+                <p>We implement an additional Emitter: the spotlight.
+                    <br><b>Validation:</b>We render a scene containing a spotlight and compare it to the rendering produced by the Mitsuba renderer. 
+                </p>
+
+                <h2 class="content-subhead">Rendering using the Euler Cluster</h2>
+                <p>
+                    <b>Validation:</b> We provide convincing terminal/console screenshots to prove that nori is running on Euler.
+                </p>
+
+
+
+
+                <h1 class="content-subhead">Medium (15 Points)</h1>
+      
+
+                <h2 class="content-subhead">Progressive Photon Mapping</h2>
+                <p>
+                    <b>Validation:</b> We render a scene using our progressive photon mapping integrator and compare it to the rendering produced by the Mitsuba renderer.
+                </p>
+
+                <h2 class="content-subhead">Spectral Rendering</h2>
+                <p>
+                    <b>Validation:</b> We render a scene with spectral rendering and compare it to the rendering produced by the Mitsuba renderer. 
+                </p>
+
+                <h2 class="content-subhead">Disney BSDF</h2>
+                <p>We implement support for the following parameters: roughness, metallic, specular, specularTint, sheen
+                    <br><b>Validation:</b> The Mitsuba renderer does not implement the Disney BSDF. For each parameter, we will find the closest possible BSDF implemented by Mitsuba and 
+                    compare an example rendering using this BSDF to our own renderings with the according Disney BSDF. 
+                    We will validate each parameter separately.
+                </p>
+
+                <h2 class="content-subhead">Moderate Denoising</h2>
+                <p>We impelement a moderate denoising method: NL-means using Pixel Variance estimates.
+                    <br><b>Validation:</b> We make several comparisons: We compare a rendered scene without denoising to the scene with denoising. This comparison will 
+                    show the impact of the denoising.
+                    <br>We optain a "Ground Truth" by rendering the scene for a large number of iterations, as many as we can in a reasonable amout of time.
+                    We then compare this Ground Truth to a rendering produced with fewer iterations, but with the denoising. This comparison will
+                    give us insights about the accuracy of the denoising.
+                </p>
+    
+
+                <h1 class="content-subhead">Large (30 Points)</h1>
+                <h2 class="content-subhead">Heterogeneous Volumetric Participating Media</h2>
+                <p>To be able to render a cloud, we implement functionality to render heterogeneous volumetric participating media.
+                    <br><b>Validation:</b> We render a scene containing heterogeneous volumetric participating media and compare it to the 
+                    rendering produced by Mitsuba. We do the same for the homogeneous volumetric participating media.
+                </p>
+
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+</body>
+
+</html>

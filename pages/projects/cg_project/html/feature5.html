@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+        <title>Final Project</title>
+        <link rel="stylesheet" href="../Resources/pure-min.css">
+        <link rel="stylesheet" href="../Resources/styles.css">
+        <link rel="stylesheet" href="../Resources/imagegrid.css">
+
+        <link href="../Resources/offcanvas.css" rel="stylesheet">
+        <link href="../Resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+    </head>
+
+<body>
+
+    <div id="layout">
+        <!-- Menu toggle -->
+        <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+        </a>
+
+        <div id="menu">
+            <div class="pure-menu pure-menu-open">
+                <a class="pure-menu-heading" href="../report.html">Final Report</a>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="../report.html">Motivation</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="features.html">Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="distribution.html">Work Distribution</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="spectral.html">Spectral Rendering</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature1.html">Modeling Meshes</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature2.html">Images as Textures</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature3.html">Normal Mapping</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature4.html">Progressive Photon Mapping</a></li>
+                    <li class="menu-item-divided pure-menu-selected"><a class="pure-menu-link" href="feature5.html">Participating Media</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="additional_features.html">Additional Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="finalRendering.html">Final Rendering</a></li></ul>
+            </div>
+        </div>
+
+        <div id="main">
+
+            <div class="content">
+                <!--<i>Please click image thumbnails for full size version</i>-->
+
+                
+                <div class="header">
+                    <h1 class="content-subhead">Participating Media (30 pt.)</h1>
+                </div>
+                <br>
+                <br>
+                Modified Files:
+                <small style="line-height:1.4">
+                <ul>
+                <li><code>src/homogeneous.cpp</code></li>
+                <li><code>src/heterogeneous.cpp</code></li>
+                <li><code>src/forward_bsdf.cpp</code></li>
+                <li><code>src/isotropic.cpp</code></li>
+                <li><code>src/henyey_greenstein.cpp</code></li>
+                <li><code>src/volpath_mats.cpp</code></li>
+                <li><code>src/volpath_mis.cpp</code></li>
+                <li><code>src/vol_pm_hetero.cpp</code></li>
+                <li><code>src/vol_pm.cpp</code></li>
+                <li><code>include/nori/medium.h</code></li>
+                </ul>
+                </small>
+                <h2 class="content-subhead">Medium</h2>
+                <p>
+                We use the medium as a basis for the homogeneous and heterogenenous implementation. The <code>medium.h</code> implementation
+                handles the object structure for the phase functions and offers the basic interface used by the different media.<br>
+                For the communication between the classes, we are using a <code>MediumQueryRecord</code> inspired from the bsdf and emitter implementations.<br>
+                The main functionalities of the media are sampling the free path distance and computing the transmittance.
+
+            </p>
+                <h3 class="content-subhead">Homogeneous</h3>
+                <p>
+                The homogeneous medium is implemented as it was introduced in the lecture. We could mainly implement the
+                provided formulas integrated to the created medium framework. Since the formulas are indepentent of the pixel samples
+                it was not a very complex task. 
+                <br>The phase function will be discussed in the section below.<br>
+            </p>
+            
+                <h3 class="content-subhead">Heterogeneous</h3>
+                <p>
+                    We followed the instructions provided in the lecture to implement the heterogeneous media. The functions are more complex and more expensive
+                    to use than the homogeneous one, which made this task more time consuming and the bug tracking harder.<br>
+                    The free path distance is computed with delta tracking.<br>
+                    The volumetric media is loaded using  <a href="https://www.openvdb.org/">openvdb </a>. This enables direct usage of .vdb files
+                    and makes the renderer more flexible. Unfortunately we could not use this feature on the euler cluster, most likely because of 
+                    a different compiler version at the euler cluster. Besides this, we experienced a lot of trouble setting up openvdb.<br>
+            </p>                
+                <h2 class="content-subhead">Phase Function</h2>
+                <p>
+                    The phase function class is integrated into the <code>medium.h</code> file. <br>
+                    It is inspired from the PBRT and mitsuba architecture and provides an extendable and modular use of phase functions. 
+                </p>
+                <h3>Isotropic</h3>
+                <p>
+                    The basic phase function <code>isotropic.cpp</code> is the isotropic phase function. It is implemented by using the <code>Warp::squareToUniformSpherePdf</code>
+                    and <code>Warp::squareToUniformSphere</code>. Since these features are already validated during the previous exercises we will leave it out.
+                    </p>
+
+                    
+                    <h2 class="content-subhead">Forward BSDF</h2>
+                    <p>
+                        The forward bsdf is used for the volumetric media boundary shapes. It is part of the logic for the medium interface implemented in the integrators.
+                        Its main function is to trigger a medium change if intersected and shoots a new ray in the same direction as the incoming ray.
+                    </p>
+                    <h2 class="content-subhead">Integrators</h2>
+                <h3 class="content-subhead">Volumetric Path Tracing</h3>
+                <h4>Material Sampling</h4>
+                    <p>
+                        The implementation of the volumetric path tracer is only a material sampling path tracer. It is
+                        implemented according to the lecture slides together with some logic for the medium interface. <br>
+                        This integrator can handle volumes with a bounding shape (heterogeneous and homogeneous). <br>
+                    </p>
+                    <p>
+                        In the following figures are some different scenes which compare the resuls of the <code>volpath_mats.cpp</code> implementation
+                        against the <code>simple_path</code> integrator from mitsuba 0.5.<br>
+                        The homogeneous media looks almost identical to the mitsuba 0.5 rendering. Because of the random sampling we have some different noise. <br>
+                        <br>
+                    </p>
+                    <center>Volumetric Path Tracer Comparison - Homogeneous</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/media/cbox_volpath_homo_1000.png" alt="Nori" class="img-responsive">
+                    <img src="../Resources/media/mitsuba_cbox_volpath_homo_simple_32.png" alt="Mitsuba" class="img-responsive">
+                </div><br>
+                <p>
+                    The heterogeneous media has some difference in the cloud noise details and in the lighting. The most likely explanation is that due to
+                        the randomness in the scattering we have different noise. <br> Another possibility for differences might be that the volume had to be 
+                        transformed to a custom format used by mitsuba 0.5
+                </p>
+                <center>Volumetric Path Tracer Comparison - Heterogeneous</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/media/cbox_volpath_hetero_1000.png" alt="Nori" class="img-responsive">
+                    <img src="../Resources/media/mitsuba_cbox_volpath_hetero_simple_32.png" alt="Mitsuba" class="img-responsive">
+                </div><br>
+                <h3 class="content-subhead">Volumetric Photon Mapping</h3>
+                    <p>
+                        Additionally to the simple path tracer, we implemented a photon mapper capable of volume rendering. There are two
+                        versions currently. They differ in the way the photons are gathered.<br>
+                        To build a photon map for volumetric photon mapping, we added an additional photon map, dedicated for the volume photons. 
+                        With some decision logic, we then trace the photons through the scene similar to the path tracer. If the photon is in a media, the photons 
+                        are stored in the dedicated volume photon map, otherwise it is stored in the surface photon map.<br> 
+                        For more flexibility we added variables for different radius and photon counts for both the volume and the surface photon maps.<br>
+                        The photons are traced through the medium through multiple scattering with <b>delta tracking</b>.
+                    </p>
+                <h4>Mean Estimate</h4>
+                    <p>
+                        This version <code>vol_pm.cpp</code> of the volumetric photon mappers, samples the mean path through the medium to compute the transmittance. 
+                        This is well suited for homogeneous media and is more efficient than ray marching, since there is no scattering computed during the photon gathering.<br>
+                        Against early doubts we can see that this method is capable of heterogeneous media.
+                    </p>
+                <h4>Delta Ray Marching</h4>
+                    <p>
+                        This version <code>vol_pm_hetero.cpp</code> of the volumetric photon mappers, will delta track the rays when gathering photons. This enables 
+                        to have very accurate transmittance for each individual path. This process is more expensive than the <b>mean estimate</b>, since the algorithm 
+                        has to resample during the build up of the photon map and the gathering of the photons.<br>
+                        The results for the homogeneous media is as expected. Unfortunately are the renderings of the heterogeneous media not as we hoped and we could 
+                        not track down the issue for the difference in the rendering results, compared to the volumetric path integrators. <br>
+                        As of our knowledge, there is no heterogeneous volumetric integrator implementation in mitsuba or pbrt. Because of that we will also compare it 
+                        to a path integrator.
+                    </p>
+                <h4>Validation</h4>
+                <p>
+                    We will compare the different integrators to each other and to the reference renderings from mitsuba 0.5. Unfortunately mitsuba photon mapper only supports
+                    homogeneous media, and even there it seems to have some issues.<br>
+                    In the following comparison we can see different homogeneous media. The images are rendered with 250'000 photons for surfaces and
+                    volumes each. The radius of the surface tracking is fixed to 0.05 and for the volumes to 0.0125.<br>
+
+                </p>
+                    <center>Photon Mapper Differences - Homogeneous</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/media/cbox_volpm_homo_pm_128_05_0125.png" alt="Mean Estimate" class="img-responsive">
+                    <img src="../Resources/media/cbox_volpm_homo_pm2_128_05_0125.png" alt="Delta Tracking" class="img-responsive">
+                    <img src="../Resources/media/mitsuba_cbox_volpm_homo_pmap_05_0125_16.png" alt="mitsuba" class="img-responsive">
+                </div><br>
+                <p>
+                    Here is the comparison of the two photon mappers performing with heterogeneous media. The rendering settings are the same as 
+                    for the homogeneous scenes. 
+                </p>
+                <center>Photon Mapper Differences - Heterogeneous</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/media/cbox_volpm_hetero_pm_128_05_0125.png" alt="Mean Estimate" class="img-responsive">
+                    <img src="../Resources/media/cbox_volpm_hetero_pm2_128_05_0125.png" alt="Delta Tracking" class="img-responsive">
+                </div><br>
+                <p>Next we compare the three renderings from the different heterogeneous capable algorithms. <br>
+                    The volume path tracer is clearly the best, we rendered 1000 samples per pixel and it took the longest to render. The photon mapper
+                    both computed 10'000'000 photons for each the surfaces and the volumes and was then rendered with 128 samples per pixel. 
+                </p>
+                <center>Heterogeneous Differences</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/media/cbox_volpath_hetero_1000.png" alt="Volume Pathtracer" class="img-responsive">
+                    <img src="../Resources/media/cbox_volpm_hetero_pm_10000000_128.png" alt="Mean Estimate" class="img-responsive">
+                    <img src="../Resources/media/cbox_volpm_hetero_pm2_10000000_128.png" alt="Delta Tracking" class="img-responsive">
+                </div><br>
+                <h2>Additional Notes</h2>
+                <p>
+                    The <code>henyey_greenstein.cpp</code> is not part of the proposed features and has not been testet. But for completion we have listed it in the beginning.<br>
+                    The <code>volpath_mis.cpp</code> is an uncomplete implementation.<br>
+                    To see how the cloud was modeled see <a href="feature1.html">Modeling Meshes</a>.
+                </p>
+
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="../Resources/bootstrap.min.js"></script>
+<script src="/js/offcanvas.js"></script>
+<script src="../Resources/jquery.event.move.js"></script>
+<script src="../Resources/jquery.twentytwenty.js"></script>
+
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+</body>
+
+</html>

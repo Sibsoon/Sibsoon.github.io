@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+        <title>Final Project</title>
+        <link rel="stylesheet" href="../Resources/pure-min.css">
+        <link rel="stylesheet" href="../Resources/styles.css">
+        <link rel="stylesheet" href="../Resources/imagegrid.css">
+
+        <link href="../Resources/offcanvas.css" rel="stylesheet">
+        <link href="../Resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+    </head>
+
+<body>
+
+    <div id="layout">
+        <!-- Menu toggle -->
+        <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+        </a>
+
+        <div id="menu">
+            <div class="pure-menu pure-menu-open">
+                <a class="pure-menu-heading" href="../report.html">Final Report</a>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="../report.html">Motivation</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="features.html">Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="distribution.html">Work Distribution</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature1.html">Modeling Meshes</a></li>
+                    <li class="menu-item-divided pure-menu-selected"><a class="pure-menu-link" href="feature2.html">Images as Textures</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature3.html">Normal Mapping</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature4.html">Progressive Photon Mapping</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature5.html">Participating Media</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="additional_features.html">Additional Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="finalRendering.html">Final Rendering</a></li></ul>
+                    
+            </div>
+        </div>
+
+        <div id="main">
+
+            <div class="content">
+                <!--<i>Please click image thumbnails for full size version</i>-->
+
+                
+                <div class="header">
+                    <h1 class="content-subhead">Images as Textures (5 pt.)</h1>
+                </div>
+                <!-- <h1 class="content-subhead">Sample Header</h1> -->
+
+                <br><br>
+                Modified Files:
+                <small style="line-height:1.4">
+                <ul>
+                <li><code>src/imagetexture.cpp</code></li>
+                </ul>
+                </small>
+                <p>
+                    For the i/o of the images we used an external header library from 
+                    <a href="https://github.com/nothings/stb">nothings/stb</a>. This library allows us to read the images 
+                    in different formats. For our particular task we used <code>stbi_loadf()</code>. <br>
+                    For the evaluation, we used the JPEG file shown in the <b>Test Texture</b> image. This image provides a variety of
+                    colors and will show differences in scaling and rotation.<br>
+                    The <code>TextureMap</code> is part of the nori <code>Texture</code> interface. The texture map takes two optional arguments,
+                    inspired by the <code>checkerboard</code> implementation, <code>scale</code> and <code>delta</code>.
+                    These optional parameter allows the user to shift and scale the texture if necessary.<br>
+                    Because we used the same base structure as the <code>checkerboard</code> texture, we only had to add a new texture subclass,
+                    the rest will be handled by the existing code.
+                </p>
+
+                <center>Test Texture</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/textureMap/UV_Grid_Sm.jpg" alt="" class="img-responsive">
+                </div><br>
+                <p>
+                    The first comparison we made is a simple scene consisting of a cornell box and a plane. The plane is textured with the 
+                    previously introduced texture. In the following figure we compare the texutre rendering from our implementation
+                    with the rendering of the mitsuba2 render engine.<br>
+                    It shows that the texture is mapped identical.
+                </p>
+                <center>Cornell Box with Textured Plane</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/textureMap/cbox_textures.png" alt="Nori" class="img-responsive">
+                    <img src="../Resources/textureMap/mitsuba_cbox_texture.png" alt="Mitsuba2" class="img-responsive">
+                </div><br>
+                <p>
+                    Next we compare the texutred analytic sphere. The mitsuba2 engine has a slightly different coordinate
+                    setup as our implementation. This is most likely due to the coordinate system for the image pixels (i/o functions) 
+                    and possibly due to the internal uv mapping, since there are different common coordinate system usages in 
+                    this field. <br>
+                    To match the appearence of the mitsuba2 sphere we applied a delta shift and a scaling to counterweight the difference.<br>
+                    Sometimes we experienced a slight difference of the two images with the exact compensation factors. This is most likely an issue with 
+                    the discrete pixel calculations made during the process of shifting, scaling and uv mapping.
+                </p>
+                <center>Analytic Sphere</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/textureMap/cbox_textures_sphere.png" alt="Nori" class="img-responsive">
+                    <img src="../Resources/textureMap/mitsuba_cbox_texture_sphere.png" alt="Mitsuba2" class="img-responsive">
+                </div><br>
+                <p>
+                    Finally we demonstrate the optional parameters <code>delta</code> and <code>scale</code>. <br>
+                    If the texture is downscaled, it will be repeated, as shown in the following figure. If the texture is upscaled, it will be truncated to the 
+                    matching size.
+                </p>
+                <center>Sphere</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/textureMap/cbox_textures_scale_delta.png" alt="Nori" class="img-responsive">
+                </div><br>
+
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="../Resources/bootstrap.min.js"></script>
+<script src="/js/offcanvas.js"></script>
+<script src="../Resources/jquery.event.move.js"></script>
+<script src="../Resources/jquery.twentytwenty.js"></script>
+
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+</body>
+
+</html>

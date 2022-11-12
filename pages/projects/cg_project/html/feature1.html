@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+        <title>Final Project</title>
+        <link rel="stylesheet" href="../Resources/pure-min.css">
+        <link rel="stylesheet" href="../Resources/styles.css">
+        <link rel="stylesheet" href="../Resources/imagegrid.css">
+
+        <link href="../Resources/offcanvas.css" rel="stylesheet">
+        <link href="../Resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+    </head>
+
+<body>
+
+    <div id="layout">
+        <!-- Menu toggle -->
+        <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+        </a>
+
+        <div id="menu">
+            <div class="pure-menu pure-menu-open">
+                <a class="pure-menu-heading" href="../report.html">Final Report</a>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="../report.html">Motivation</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="features.html">Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="distribution.html">Work Distribution</a></li>
+                    <li class="menu-item-divided pure-menu-selected"><a class="pure-menu-link" href="feature1.html">Modeling Meshes</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature2.html">Images as Textures</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature3.html">Normal Mapping</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature4.html">Progressive Photon Mapping</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature5.html">Participating Media</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="additional_features.html">Additional Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="finalRendering.html">Final Rendering</a></li></ul>
+            </div>
+        </div>
+
+        <div id="main">
+
+            <div class="content">
+                <!--<i>Please click image thumbnails for full size version</i>-->
+
+                <div class="header">
+                    <h1 class="content-subhead">Modeling Mesh (5 pt.)</h1>
+                </div>
+            <p>
+                For the project we mostly worked with our own meshes when we were testing and developping,
+                if we had to use something else than a sphere or a simple cube. For the modeling we used Blender 2.90 and 
+                 Houdini 18.5 (Apprentice).</br>
+                </br>
+                To validate the features, we decided to present the lighting and the cloud. Both are
+                important pieces of the target image. To find appropriate heterogeneous models turned out
+                to be less easy than expected. Thus we decided to do it ourself.</br>
+                Similar reasons apply for the lighting. 
+            </p>
+                <h1 class="content-subhead">Lightning</h1>
+                <p>
+                    The Lighting for our scene is represented by an area emitter. For this particular emitter, we need a very unconventional shape. 
+                    Thats why we decided to model it ourself.<br>
+                    The model consists of individual branches of cylindric tubes. The branches are disconnected to provide the possibility to apply different stengths 
+                    and colors. <br>
+                    The modeling process took place in three iterations. The first iteration was a single lightning bolt. The second iteration was similar to a
+                    wooden branch. For the final and third iteration, we added lots of micro lightnings to generate the feel of electricity.<br>
+                    In the following images is the final version of the lightning.
+                </p>
+                    <center>Blender Model</center>
+                    <div class="twentytwenty-container">
+                        <img src="../Resources/modelMesh/lightning.png" alt="Blender" class="img-responsive">
+                    </div><br> 
+                <p>This view provides an overview on the vertice count and the structure of the model.</p>
+                    <center>Edit Mode</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/vertices.png" alt="Blender" class="img-responsive">
+                </div><br> 
+                <p>The next image shows that the different branches are disconnected. In the focus is the main thunderbolt, which will hit the bottom surface.</p>
+                <center>Lightning Bolt</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/detail.png" alt="Blender" class="img-responsive">
+                </div><br> 
+
+
+                <h1 class="content-subhead">Cloud</h1>
+            <p>
+                The cloud is made in Houdini. To validate the originality of the model we will provide a run
+                through, on how it was designed together with some screenshots during the process.</br>
+                The model consist out of six modeling blocks in houdini.</br></p>
+                <center>pipeline</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/pipeline.png" alt="Houdini" class="img-responsive">
+                </div><br> 
+
+
+                </br><h3>Sphere</h3> 
+                <p>
+                As basis for the cloud, we took a sphere, which we subdivided for a fine grained mesh.</p>
+                <center>Sphere</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/sphere.png" alt="Houdini" class="img-responsive">
+                </div><br>    
+                </br><h3>Mountain</h3> 
+                <p>
+                Next we applied a mountain geometry node. This modifier applies a mountain like deformation to the mesh.
+            </p>
+                <center>Mountain</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/mountain.png" alt="Houdini" class="img-responsive">
+                </div><br>  
+                </br><h3>Transform</h3> 
+                <p>
+                To get the model in the right scale and position we used a transformation node. Here we deformed the
+                mesh and made it smaller in the z-axis.</p>
+                <center>Transform</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/transform.png" alt="Houdini" class="img-responsive">
+                </div><br>  
+                </br><h3>Cloud</h3>
+                <p>
+                Next we applied the magic of houdini. With adding the cloud node to the pipeline. This node creates
+                a volume representation of the polygon.</p>
+                <center>Cloud</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/cloud.png" alt="Houdini" class="img-responsive">
+                </div><br>  
+                </br><h3>Cloudnoise</h3>
+                <p>
+                To ge a more realistic view we additionally added the cloud noise geometry node. 
+                This node will vary the cloud based on a random seed. <br/>Since we had some iterations for the final rendered cloud, 
+                it is likely that the preview provided in this report may differ from the final model. This is because most of the 
+                changes in the houdini project influence the seed and create new random patterns.</p>
+                <center>Cloudnoise</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/cloudnoise.png" alt="Houdini" class="img-responsive">
+                </div><br>  
+                </br><h3>Volume VOP</h3>
+                <p>
+                The last node in the pipeline is used for the cloud model. It is the Volume VOP node. This node allows to change
+                color, weights and density. We followed some tutorials to set up a realistic density distribution with the right scaling, wich is 
+                represented in the Volume VOP Node figure.</p>
+                <center>Volume VOP</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/volop.png" alt="Houdini" class="img-responsive">
+                </div><br>  
+                <center>Volume VOP Node</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/modelMesh/volvop.png" alt="Houdini" class="img-responsive">
+                </div><br>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="../Resources/bootstrap.min.js"></script>
+<script src="/js/offcanvas.js"></script>
+<script src="../Resources/jquery.event.move.js"></script>
+<script src="../Resources/jquery.twentytwenty.js"></script>
+
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+        <title>Final Project</title>
+        <link rel="stylesheet" href="../Resources/pure-min.css">
+        <link rel="stylesheet" href="../Resources/styles.css">
+        <link rel="stylesheet" href="../Resources/imagegrid.css">
+
+        <link href="../Resources/offcanvas.css" rel="stylesheet">
+        <link href="../Resources/twentytwenty.css" rel="stylesheet" type="text/css" />
+    </head>
+
+<body>
+
+    <div id="layout">
+        <!-- Menu toggle -->
+        <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+        </a>
+
+        <div id="menu">
+            <div class="pure-menu pure-menu-open">
+                <a class="pure-menu-heading" href="../report.html">Final Report</a>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="../report.html">Motivation</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="features.html">Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="distribution.html">Work Distribution</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature1.html">Modeling Meshes</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature2.html">Images as Textures</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature3.html">Normal Mapping</a></li>
+                    <li class="menu-item-divided pure-menu-selected"><a class="pure-menu-link" href="feature4.html">Progressive Photon Mapping</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="feature5.html">Participating Media</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="additional_features.html">Additional Features</a></li>
+                    <li class="pure-menu-item"><a class="pure-menu-link" href="finalRendering.html">Final Rendering</a></li></ul>
+            </div>
+        </div>
+
+        <div id="main">
+
+            <div class="content">
+                <!--<i>Please click image thumbnails for full size version</i>-->
+
+                
+                <div class="header">
+                    <h1 class="content-subhead" style="font-size:36px">Progressive Photon Mapping (15 pt.)</h1>
+                </div>
+                <br><br>
+                Modified Files:
+                <small style="line-height:1.4">
+                <ul>
+                <li><code>src/render.cpp</code></li>
+                <li><code>src/ppm.cpp</code></li>
+                <li><code>include/integrator.h</code></li>
+                </ul>
+                </small>
+                <p>
+                This feature is implemented according to the paper 
+                <a href="https://www.ci.i.u-tokyo.ac.jp/~hachisuka/ppm.pdf">Hachisuka et al.</a>, which was linked with the task.
+                There were two main parts to this feature:<br>
+                The different structure of the renderer, since it is a progressive multipass algorithm, and
+                creating a suitable integrator for its support.
+                </p>
+                <h2>Render Changes</h2> 
+                <p>
+                    To solve the issue of a relatively different structure for the renderer we introduced a <code>isProgressiv()</code>
+                    function and branched the execution accordingly. Only the progressive branch is modified.<br>
+                    If there is a progressive execution, nori will allocate memory for each possible hitpoint. After this, the hitpoints
+                    are sampled with the ray tracing pass of the algorithm, where every hitpoint is then stored in the pre-allocated
+                    memory. Thanks to the structure of the memory, this step can be performed in parallel, utilizing the full
+                    potential of nori.<br>
+                    After this step, the iterative part is entered. The iteration always builds a photon map in the first phase and then 
+                    evaluates every stored hitpoint together with the photon map. <br> The keypoint to this algorithm is that
+                    the search radius is progressively reduced and the total emitted photons increased. This leads to a nice convergence 
+                    of the image.<br>
+                    Visually we can observe every sampling of every iteration. The algorithm will only stop on a manual interrupt.
+                </p>
+
+                <h2>Photon Mapper</h2>
+                <p>
+                    To match the structure of a progressive photon mapper we restructured the integrator into three different parts, the ray tracer, the photon map builder and the photon tracer.
+                    This allows us to call each step when necessary.<br>
+                    The ray tracer simply traces the photons until they hit a diffuse surface. The only purpose of this function is to sample visible points in the scene. After tracing a ray,
+                    the function returns a struct with the statistical data of the point, which is then used for the radius estimate.<br>
+                    The photon map builder is basically the same as for a regular photon mapper. It is important to sample the photons with a non deterministic sampler,
+                    such that the different photon maps have different content.<br>
+                    The photon tracing is the very similar to a regular photon map algorithm. But the previously calculated hitpoints are used for the photon gathering, which means there
+                    is no tracing involved in this step. After the radiance evaluation, we update the statistical data of the hitpoints.
+                </p>
+                <h2>Validation</h2>
+                <p>
+                    We will first compare the result of the ppm with different passes to the photon mapper implemented during the semester. We can observe the
+                    improvement of the ppm over the pmap. The inital difference due to noise between the first pass of the ppm and the pmap converge to the same result, approximated
+                    by the 100 pass ppm.
+                </p>
+                <center>Photon Mapper Differences</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/ppm/cbox_ppm_pmap.png" alt="pmap" class="img-responsive">
+                    <img src="../Resources/ppm/cbox_ppm_1_211489.png" alt="ppm 1 Pass" class="img-responsive">
+                    <img src="../Resources/ppm/cbox_ppm_102_10889469.png" alt="ppm 102 Pass" class="img-responsive">
+                </div><br>
+                <p>
+                    Next is a comparison to the mitsuba renderer. Initially, it was planned to compare the ppm one-to-one to the mitsuba implementation. It seems to have a bug in the 
+                    ppm implementation of mitsuba 0.5. Because of this we compare the result additionally to the sppm of mitsuba, as discussed 
+                    <a href="https://piazza.com/class/kexax7xbnxn6ge?cid=371">here</a>. The sppm algorithm is more advanced than the
+                    ppm, such that we expect the mitsuba sppm results to be different than the ppm results. <br>
+
+                </p>
+                <center>Mitsuba Comparison</center>
+                <div class="twentytwenty-container">
+                    <img src="../Resources/ppm/cbox_ppm_89.png" alt="Nori ppm 89 Pass" class="img-responsive">
+                    <img src="../Resources/ppm/cbox_ppm_.png" alt="Mitsuba ppm 100> Pass" class="img-responsive">
+                    <img src="../Resources/ppm/cbox_sppm.png" alt="Mitsuba sppm 100> Pass" class="img-responsive">
+                </div><br>
+                
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!-- Bootstrap core JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="../Resources/bootstrap.min.js"></script>
+<script src="/js/offcanvas.js"></script>
+<script src="../Resources/jquery.event.move.js"></script>
+<script src="../Resources/jquery.twentytwenty.js"></script>
+
+<script>
+$(window).load(function(){$(".twentytwenty-container").twentytwenty({default_offset_pct: 0.5});});
+</script>
+</body>
+
+</html>
